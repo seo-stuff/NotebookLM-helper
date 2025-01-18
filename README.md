@@ -70,6 +70,31 @@ python tg-json-txt.py
 - Доступ к NotebookLM
 - Современный веб-браузер с поддержкой JavaScript
 
+## Запуск скриптов в браузере
+
+### Google Chrome / Microsoft Edge
+1. Откройте DevTools: 
+   - Windows/Linux: `F12` или `Ctrl + Shift + I`
+   - macOS: `Cmd + Option + I`
+2. Перейдите во вкладку "Console"
+3. Скопируйте содержимое сгенерированного .js файла
+4. Вставьте код в консоль и нажмите Enter
+
+### Mozilla Firefox
+1. Откройте инструменты разработчика:
+   - Windows/Linux: `F12` или `Ctrl + Shift + I`
+   - macOS: `Cmd + Option + I`
+2. Перейдите во вкладку "Console"
+3. Нажмите кнопку разрешения многострочного ввода (значок блокнота)
+4. Вставьте код и нажмите `Ctrl + Enter` (`Cmd + Return` на macOS)
+
+### Safari
+1. Включите меню разработчика:
+   - Preferences → Advanced → Show Develop menu in menu bar
+2. Откройте консоль: Develop → Show Web Inspector (`Cmd + Option + I`)
+3. Перейдите во вкладку "Console"
+4. Вставьте код и нажмите Enter
+
 ## Автор
 - **Иван Зимин**
   - YouTube: Иван Зимин | SEO (@seo_stuff)
