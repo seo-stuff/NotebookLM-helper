@@ -105,11 +105,8 @@ if __name__ == "__main__":
     print_author_info()
     url = input("Введите URL YouTube канала или плейлиста: ")
     videos = get_videos(url)
-    
-    with open('youtube_links.txt', 'w', encoding='utf-8') as f:
-        for video in videos:
-            f.write(f"{video}\n")
-            print(video)
+    for video in videos:
+        print(video)
             
     js_code = generate_js_code(videos)
     with open('youtube_automation.js', 'w', encoding='utf-8') as f:
