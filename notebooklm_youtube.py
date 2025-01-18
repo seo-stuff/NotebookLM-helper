@@ -1,34 +1,56 @@
 from yt_dlp import YoutubeDL
+from typing import Tuple, List, Union
 
-def get_videos(url):
+def get_videos(url: str, source_type: str) -> Tuple[Union[List[str], str], int]:
     ydl_opts = {
-        'extract_flat': 'in_playlist',
+        'extract_flat': True,
         'quiet': True,
         'playlistend': 9999,
         'ignoreerrors': True,
         'playlist_items': '1:9999'
     }
     
-    if not '/videos' in url:
-        url = f"{url}/videos"
+    base_url = url.split('/videos')[0].split('/streams')[0].rstrip('/')
+    if source_type == "1":
+        url = f"{base_url}/videos"
+    elif source_type == "2":
+        url = f"{base_url}/streams"
     
     with YoutubeDL(ydl_opts) as ydl:
         try:
             result = ydl.extract_info(url, download=False)
+            if not result:
+                return [], 0
+                
             videos = []
+            total_videos = 0
             
             if 'entries' in result:
-                for entry in result['entries']:
-                    if entry:
-                        video_url = f"https://www.youtube.com/watch?v={entry['id']}"
-                        videos.append(video_url)
-            else:
-                video_url = f"https://www.youtube.com/watch?v={result['id']}"
-                videos.append(video_url)
+                entries = [entry for entry in result['entries'] if entry]
+                total_videos = len(entries)
+                
+                if total_videos == 0:
+                    return [], 0
                     
-            return videos
+                for entry in entries:
+                    if 'view_count' in entry:
+                        video_url = f"https://www.youtube.com/watch?v={entry['id']}"
+                        videos.append((video_url, entry.get('view_count', 0)))
+                
+                if videos:
+                    videos.sort(key=lambda x: x[1], reverse=True)
+                    videos = [url for url, _ in videos]
+            else:
+                if 'id' in result:
+                    video_url = f"https://www.youtube.com/watch?v={result['id']}"
+                    videos.append(video_url)
+                    total_videos = 1
+                    
+            return videos, total_videos
+            
         except Exception as e:
-            return f"Error: {str(e)}"
+            print(f"\nОшибка при получении данных: {str(e)}")
+            return [], 0
 
 def generate_js_code(videos):
     js_code = """const config = {
@@ -103,11 +125,33 @@ def print_author_info():
 
 if __name__ == "__main__":
     print_author_info()
-    url = input("Введите URL YouTube канала или плейлиста: ")
-    videos = get_videos(url)
+    url = input("Введите URL YouTube канала: ")
+    
+    print("\nВыберите источник данных:")
+    print("[1] Из видео")
+    print("[2] Из трансляций")
+    source_type = input("Ваш выбор: ")
+    
+    while source_type not in ["1", "2"]:
+        print("\nНекорректный выбор!")
+        source_type = input("Выберите 1 или 2: ")
+    
+    videos, total_videos = get_videos(url, source_type)
+    
+    if not videos:
+        print("\nВидео не найдены!")
+        input("\nНажмите Enter для завершения...")
+        exit()
+        
+    print(f"\nВсего найдено: {total_videos}")
+    print(f"Добавлено в файл: {len(videos)}")
+    print("\nСписок URL:")
+    
     for video in videos:
         print(video)
             
     js_code = generate_js_code(videos)
     with open('youtube_automation.js', 'w', encoding='utf-8') as f:
         f.write(js_code)
+        
+    input("\nНажмите Enter для завершения...")
