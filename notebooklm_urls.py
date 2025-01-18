@@ -1,5 +1,11 @@
 import sys
 
+def print_author_info():
+    print("Автор - Иван Зимин")
+    print("YT канал - Иван Зимин | SEO (@seo_stuff)")
+    print("Telegram канал - Иван Зимин | SEO (@heymoneymaker)")
+    print("-" * 50)
+
 def get_urls():
     try:
         with open('urls.txt', 'r', encoding='utf-8') as f:
@@ -75,6 +81,7 @@ processUrls().catch(error => {
         f.write(js_template % formatted_urls)
 
 if __name__ == '__main__':
+    print_author_info()
     urls = get_urls()
     if urls:
         generate_js_file(urls)
