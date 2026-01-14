@@ -108,22 +108,26 @@ for msg in merged_messages:
 file_number = 1
 current_size = 0
 max_size = 3 * 1024 * 1024
-current_file = open(f'{chat_name}_{file_number}.txt', 'w', encoding='utf-8')
+current_file = None
 
-for message in unique_messages:
-    line = "*\n" + message + '\n'
-    line_size = len(line.encode('utf-8'))
-    
-    if current_size + line_size > max_size and current_size > 0:
+try:
+    current_file = open(f'{chat_name}_{file_number}.txt', 'w', encoding='utf-8')
+
+    for message in unique_messages:
+        line = "*\n" + message + '\n'
+        line_size = len(line.encode('utf-8'))
+
+        if current_size + line_size > max_size and current_size > 0:
+            current_file.close()
+            file_number += 1
+            current_file = open(f'{chat_name}_{file_number}.txt', 'w', encoding='utf-8')
+            current_size = 0
+
+        current_file.write(line)
+        current_size += line_size
+finally:
+    if current_file:
         current_file.close()
-        file_number += 1
-        current_file = open(f'{chat_name}_{file_number}.txt', 'w', encoding='utf-8')
-        current_size = 0
-    
-    current_file.write(line)
-    current_size += line_size
-
-current_file.close()
 
 print(f"Название чата: {chat_name}")
 print(f"Обработано {len(unique_messages)} уникальных сообщений")
